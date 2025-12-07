@@ -1,0 +1,21 @@
+{
+    "sqltools.connections": [
+        {
+            "oracleOptions": {
+                "privilege": "Normal",
+                "thickMode": false,
+                "autoCommit": true,
+                "lowerCase": true,
+                "limitPrefetchRows": false
+            },
+            "previewLimit": 1000,
+            "server": "localhost",
+            "port": 1521,
+            "driver": "Oracle",
+            "name": "MEDICAL_CENTER_SYSTEM",
+            "database": "MYATP",
+            "username": "MEDICAL_CENTER_SYSTEM",
+            "password": "Malek7788Adb"
+        }
+    ]
+}
