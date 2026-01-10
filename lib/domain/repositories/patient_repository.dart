@@ -1,5 +1,5 @@
-import '../entities/patient_result.dart';
+import '../entities/patient_entity.dart';
 
 abstract class PatientRepository {
-  Future<List<PatientResult>> getAllPatients(String invoiceId);
+  Future<List<PatientEntity>> getAllPatients(String invoiceId);
 }

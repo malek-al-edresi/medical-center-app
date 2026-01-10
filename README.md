@@ -1,42 +1,52 @@
 # Medical Center App 🏥
 
-A professional, production-ready Flutter mobile application designed for medical centers to manage patient data, invoices, and medical results. Built with **Clean Architecture** principles to ensure scalability, maintainability, and testability.
+A professional, production-ready Flutter mobile application designed for medical centers to manage patient data, invoices, and medical results. This app serves as a frontend for an **Oracle APEX** based hospital management system.
+
+Built with strict **Clean Architecture** principles to ensure scalability, maintainability, and testability.
 
 ---
 
 ## 🚀 Application Overview
 
-The app serves as a patient portal and medical record viewer, allowing users to:
-- Retrieve medical records using a unique **Invoice ID**.
-- View comprehensive **Patient Information**.
-- Access detailed **Lab Results**, **Radiology Images**, **Diagnosis**, and **Treatment Plans**.
-- **Share** or **Save** reports as PDF.
-- Toggle between **English** and **Arabic** (RTL support).
+The app acts as a secure patient portal and medical record viewer, empowering patients to:
+- 🔍 **Track Records**: Retrieve medical records using a unique **Invoice ID**.
+- 👤 **Patient Profile**: View comprehensive **Patient Information**.
+- 🧪 **Lab Results**: Access detailed laboratory test results with normal ranges and abnormalities highlighted.
+- 🩻 **Radiology**: View radiology reports and images.
+- 💊 **Treatments**: Access diagnosis details and prescribed treatment plans.
+- 📄 **PDF Reports**: **Share** or **Save** official medical reports as PDF.
+- 🌍 **Localization**: Seamlessly toggle between **English** and **Arabic** (Full RTL support).
 
 ---
 
 ## 🏗️ Architecture
 
-This project follows **Clean Architecture** combined with **MVVM** pattern:
+This project strictly follows **Clean Architecture** combined with **MVVM** (Model-View-ViewModel) pattern, ensuring clear separation of concerns:
 
 ### 1. Presentation Layer (`lib/presentation/`)
-- **Screens**: UI pages (Home, InvoiceDetails, LabResults, etc.).
-- **Widgets**: Reusable components (ResultCard, CustomTextField, etc.).
-- **State Management**: Uses `Provider` for state injection and management.
+Responsible for specific UI code.
+- **Screens**: UI pages (e.g., `HomeScreen`, `LabResultsScreen`).
+- **Widgets**: Reusable UI components (e.g., `ResultCard`, `SectionHeader`).
+- **Routes**: Centralized navigation management via `AppRoutes`.
 
 ### 2. Domain Layer (`lib/domain/`)
-- **Entities**: Pure Dart objects representing core business data.
-- **Repositories (Interfaces)**: Abstract contracts defining data operations.
-- **UseCases**: Encapsulate specific business logic (e.g., `GetPatientByInvoice`).
+The inner-most layer, containing pure business logic. **No Flutter dependencies** (mostly).
+- **Entities**: Pure Dart objects representing core business data (e.g., `PatientEntity`, `LabResultEntity`).
+- **Repositories (Interfaces)**: Abstract contracts defining data operations (e.g., `MedicalRepository`).
+- **UseCases**: Encapsulate specific business rules (e.g., `GetLabResults`).
 
 ### 3. Data Layer (`lib/data/`)
-- **Models**: DTOs (Data Transfer Objects) that handle JSON parsing and serialization.
-- **Datasources**: Remote API definitions (using `http`).
-- **Repositories (Implementations)**: Concrete implementations of domain repositories.
+Responsible for data retrieval and manipulation.
+- **Models**: DTOs (Data Transfer Objects) handling JSON parsing/serialization (e.g., `LabResultModel`).
+- **Datasources**: Remote API interaction logic (e.g., `MedicalApiService`).
+- **Repositories (Implementations)**: Concrete implementations of domain repositories using datasources.
 
 ### 4. Core Layer (`lib/core/`)
-- **Utils**: Shared utilities (Theme, Constants, Exception Handling).
-- **Localization**: Multi-language support configuration.
+Cross-cutting concerns and shared utilities.
+- **Constants**: App-wide constants (Colors, Dimensions, Strings).
+- **Network**: HTTP overrides and configurations.
+- **Utils**: Helper classes (Date formatting, PDF generation).
+- **Widgets**: Generic widgets shared across the app (Loaders, Error Views).
 
 ---
 
@@ -44,20 +54,27 @@ This project follows **Clean Architecture** combined with **MVVM** pattern:
 
 ```bash
 lib/
-├── core/                   # Core utilities, constants, theme, and errors
-├── data/                   
+├── core/                   # Shared utilities, constants, theme, network
+│   ├── constants/
+│   ├── error/
+│   ├── localization/
+│   ├── network/
+│   ├── theme/
+│   ├── utils/
+│   └── widgets/
+├── data/                   # Data layer implementation
 │   ├── datasources/        # Remote API services
 │   ├── models/             # Data models (JSON parsing)
 │   └── repositories/       # Repository implementations
-├── domain/
-│   ├── entities/           # Business entities
+├── domain/                 # Business logic definitions
+│   ├── entities/           # Pure business objects
 │   ├── repositories/       # Repository interfaces
 │   └── usecases/           # Application business rules
-├── logic/
-│   └── providers/          # State management (Provider)
-├── presentation/
+├── logic/                  # State management
+│   └── providers/          # Provider implementations
+├── presentation/           # UI Layer
 │   ├── routes/             # Navigation configuration
-│   ├── screens/            # App screens
+│   ├── screens/            # App pages
 │   └── widgets/            # Reusable UI components
 └── main.dart               # App entry point
 ```
@@ -66,26 +83,29 @@ lib/
 
 ## 🛠️ Tech Stack & Dependencies
 
-- **Framework**: [Flutter](https://flutter.dev/)
+- **Framework**: [Flutter](https://flutter.dev/) (SDK 3.x)
+- **Language**: Dart
 - **State Management**: [Provider](https://pub.dev/packages/provider)
 - **Networking**: [http](https://pub.dev/packages/http)
-- **UI Components**: [GetWidget](https://pub.dev/packages/getwidget), [Flashy Tab Bar](https://pub.dev/packages/flashy_tab_bar2)
-- **Animations**: [Animate Do](https://pub.dev/packages/animate_do), [Flutter Animate](https://pub.dev/packages/flutter_animate)
-- **Utilities**: 
-  - `share_plus` (File sharing)
-  - `syncfusion_flutter_pdf` (PDF generation)
-  - `flutter_localization` (Internationalization)
-  - `google_fonts` (Typography)
+- **UI & Design**:
+  - [GetWidget](https://pub.dev/packages/getwidget) for standard components.
+  - [Glassmorphism](https://pub.dev/packages/glassmorphism) for modern UI effects.
+  - [Google Fonts](https://pub.dev/packages/google_fonts) for typography.
+  - [Flutter Animate](https://pub.dev/packages/flutter_animate) & [Animate Do](https://pub.dev/packages/animate_do) for animations.
+- **Utilities**:
+  - `printing` & `syncfusion_flutter_pdf` for PDF generation.
+  - `flutter_localization` for Internationalization.
+  - `share_plus` for sharing content.
 
 ---
 
 ## ⚙️ Setup & Installation
 
-1. **Prerequisites**: Ensure you have Flutter SDK installed (Version 3.x+).
+1. **Prerequisites**: Ensure you have Flutter SDK installed and environment set up.
 2. **Clone the Repository**:
    ```bash
-   git clone https://github.com/your-username/medical-center-app.git
-   cd medical-center-app
+   git clone <repository-url>
+   cd medical_center_system
    ```
 3. **Install Dependencies**:
    ```bash
@@ -100,18 +120,9 @@ lib/
 
 ## 🌍 Localization
 
-The app supports **English** and **Arabic**. 
-The locale is automatically handled based on user preference or device settings, with full **RTL (Right-to-Left)** layout support for Arabic.
-
----
-
-## 🤝 Contribution
-
-1. Fork the Project.
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`).
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`).
-4. Push to the Branch (`git push origin feature/AmazingFeature`).
-5. Open a Pull Request.
+The app supports **English (en)** and **Arabic (ar)**.
+- **RTL Support**: The UI automatically mirrors for Arabic language.
+- **Switching**: Users can toggle language directly from the Home Screen app bar.
 
 ---
 
