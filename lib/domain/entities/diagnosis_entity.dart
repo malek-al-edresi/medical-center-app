@@ -1,5 +1,4 @@
-
-class DiagnosisResult {
+class DiagnosisEntity {
   final String patientName;
   final String patientPhone;
   final String gender;
@@ -17,7 +16,7 @@ class DiagnosisResult {
   final String details;
   final String doctorNotes;
 
-  DiagnosisResult({
+  const DiagnosisEntity({
     required this.patientName,
     required this.patientPhone,
     required this.gender,
@@ -35,25 +34,4 @@ class DiagnosisResult {
     required this.details,
     required this.doctorNotes,
   });
-
-  factory DiagnosisResult.fromJson(Map<String, dynamic> json) {
-    return DiagnosisResult(
-      patientName: json['PATIENT_NAME'] ?? '',
-      patientPhone: json['PATIENT_PHONE'] ?? '',
-      gender: json['GENDER'] ?? '',
-      appointmentId: json['APPOINTMENTID'] ?? '',
-      dateStart: json['DATE_START'] ?? '',
-      doctorName: json['DOCTOR_NAME'] ?? '',
-      clinicName: json['CLINIC_NAME'] ?? '',
-      diagnosisDate: json['DIAGNOSISDATE'] ?? '',
-      fullNameRadiology: json['FULL_NAME_RADIOLOGY'] ?? '',
-      diagnosisDescription: json['DIAGNOSIS_DESCRIPTION'] ?? '',
-      invoiceId: json['INVOICEID'] ?? '',
-      fullNameTest: json['FULL_NAME_TEST'] ?? '',
-      testType: json['TEST_TYPE'] ?? '',
-      fullReadyDiag: json['FULL_READY_DIAG'] ?? '',
-      details: json['DETAILS'] ?? '',
-      doctorNotes: json['DOCTOR_NOTES'] ?? '',
-    );
-  }
 }

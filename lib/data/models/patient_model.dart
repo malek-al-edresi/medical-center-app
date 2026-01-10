@@ -1,49 +1,28 @@
-import '../../domain/entities/patient_result.dart';
+import '../../domain/entities/patient_entity.dart';
 
-class PatientModel extends PatientResult {
-  PatientModel({
-    required String patientId,
-    required String fullName,
-    required String phone,
-    required String address,
-    required String email,
-    required String gender,
-    required String birthDate,
-    required String maritalStatus,
-    required String bloodType,
-    required String hobbyTypeId,
-    required String personalNumberId,
-    required String emergencyName,
-    required String emergencyPhone,
-    required String allergies,
-    required String chronicDiseases,
-    required String medications,
-    required String surgeries,
-    required String medicalHistory,
-    required String photo,
-    required int invoiceCount,
-  }) : super(
-    patientId: patientId,
-    fullName: fullName,
-    phone: phone,
-    address: address,
-    email: email,
-    gender: gender,
-    birthDate: birthDate,
-    maritalStatus: maritalStatus,
-    bloodType: bloodType,
-    hobbyTypeId: hobbyTypeId,
-    personalNumberId: personalNumberId,
-    emergencyName: emergencyName,
-    emergencyPhone: emergencyPhone,
-    allergies: allergies,
-    chronicDiseases: chronicDiseases,
-    medications: medications,
-    surgeries: surgeries,
-    medicalHistory: medicalHistory,
-    photo: photo,
-    invoiceCount: invoiceCount,
-  );
+class PatientModel extends PatientEntity {
+  const PatientModel({
+    required super.patientId,
+    required super.fullName,
+    required super.phone,
+    required super.address,
+    required super.email,
+    required super.gender,
+    required super.birthDate,
+    required super.maritalStatus,
+    required super.bloodType,
+    required super.hobbyTypeId,
+    required super.personalNumberId,
+    required super.emergencyName,
+    required super.emergencyPhone,
+    required super.allergies,
+    required super.chronicDiseases,
+    required super.medications,
+    required super.surgeries,
+    required super.medicalHistory,
+    required super.photo,
+    required super.invoiceCount,
+  });
 
   factory PatientModel.fromJson(Map<String, dynamic> json) {
     return PatientModel(
@@ -66,7 +45,8 @@ class PatientModel extends PatientResult {
       surgeries: json['previoussurgeries'] ?? '',
       medicalHistory: json['medicalhistory'] ?? '',
       photo: json['photo_patient'] ?? '',
-      invoiceCount: int.tryParse(json['count_invoiceid']?.toString() ?? '') ?? 0,
+      invoiceCount:
+          int.tryParse(json['count_invoiceid']?.toString() ?? '') ?? 0,
     );
   }
 }

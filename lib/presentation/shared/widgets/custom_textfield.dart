@@ -43,7 +43,7 @@ class TextFieldCustom extends StatelessWidget {
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
-                color: colorScheme.primary.withOpacity(0.1),
+                color: colorScheme.primary.withValues(alpha: 0.1),
                 blurRadius: 10,
                 spreadRadius: 1,
                 offset: const Offset(0, 4),
@@ -71,11 +71,11 @@ class TextFieldCustom extends StatelessWidget {
               ),
               prefixIcon: Icon(prefixIcon, color: colorScheme.primary),
               filled: true,
-              fillColor: theme.inputDecorationTheme.fillColor ?? colorScheme.background,
+              fillColor: theme.inputDecorationTheme.fillColor ?? colorScheme.surface,
               contentPadding: theme.inputDecorationTheme.contentPadding,
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(20),
-                borderSide: BorderSide(color: colorScheme.primary.withOpacity(0.3)),
+                borderSide: BorderSide(color: colorScheme.primary.withValues(alpha: 0.3)),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(20),
@@ -83,7 +83,7 @@ class TextFieldCustom extends StatelessWidget {
               ),
               hintText: hintText,
               hintStyle: theme.inputDecorationTheme.hintStyle ??
-                  TextStyle(color: colorScheme.onBackground.withOpacity(0.5)),
+                  TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.5)),
               suffixIcon: IconButton(
                 icon: Icon(actionIcon, color: colorScheme.primary),
                 onPressed: onSearchPressed,

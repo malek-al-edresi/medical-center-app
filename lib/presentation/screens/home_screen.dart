@@ -1,147 +1,145 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:flashy_tab_bar2/flashy_tab_bar2.dart';
-
+import '../../core/constants/app_colors.dart';
+import '../../core/constants/app_dimensions.dart';
+import '../../core/localization/app_localizations.dart';
 import '../../logic/providers/patient_provider.dart';
-import '../../logic/providers/radiology_result_provider.dart';
-import '../../logic/providers/diagnosis_result_provider.dart';
-import '../../logic/providers/treatment_result_provider.dart';
-
-import 'lab_result_screen.dart';
-import 'treatment_result_screen.dart';
-import 'diagnosis_screen.dart';
-import 'patient_screen.dart';
-import 'radiology_result_screen.dart';
+import '../../logic/providers/language_provider.dart';
+import '../routes/app_routes.dart';
+import '../../core/widgets/app_loader.dart';
 
 class HomeScreen extends StatefulWidget {
-  final String invoiceId;
-
-  const HomeScreen({Key? key, required this.invoiceId}) : super(key: key);
+  const HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int _selectedIndex = 0;
-  late final List<Widget> _screens;
+  late final TextEditingController _invoiceController;
 
   @override
   void initState() {
     super.initState();
-    Future.microtask(() {
-      Provider.of<PatientProvider>(
-        context,
-        listen: false,
-      ).fetchResults(widget.invoiceId);
-      Provider.of<RadiologyResultProvider>(
-        context,
-        listen: false,
-      ).fetchResults(widget.invoiceId);
-      Provider.of<DiagnosisResultProvider>(
-        context,
-        listen: false,
-      ).fetchResults(widget.invoiceId);
-      Provider.of<TreatmentResultProvider>(
-        context,
-        listen: false,
-      ).fetchResults(widget.invoiceId);
-    });
-
-    _screens = <Widget>[
-      PatientScreen(invoiceId: widget.invoiceId),
-      TreatmentResultScreen(invoiceId: widget.invoiceId),
-      DiagnosisScreen(invoiceId: widget.invoiceId),
-      LabResultScreen(invoiceId: widget.invoiceId),
-      RadiologyResultScreen(invoiceId: widget.invoiceId),
-    ];
+    _invoiceController = TextEditingController();
   }
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
+  @override
+  void dispose() {
+    _invoiceController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _submit() async {
+    final invoiceId = _invoiceController.text.trim();
+    if (invoiceId.isEmpty) return;
+
+    // Dismiss keyboard
+    FocusScope.of(context).unfocus();
+
+    final provider = Provider.of<PatientProvider>(context, listen: false);
+    await provider.fetchMedicalData(invoiceId);
+
+    if (!mounted) return;
+
+    if (provider.state == ViewState.loaded) {
+      Navigator.pushNamed(context, AppRoutes.invoiceDetails);
+    } else if (provider.state == ViewState.error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(provider.errorMessage ?? 'An error occurred'),
+          backgroundColor: AppColors.error,
+        ),
+      );
+    } else if (provider.state == ViewState.empty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context)?.translate('noData') ??
+                'No Data Found',
+          ),
+        ),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final selectedColor = theme.primaryColor;
-    final unselectedColor = theme.primaryColor;
+    final localization = AppLocalizations.of(context);
+    final isLoading = context.select<PatientProvider, bool>(
+      (p) => p.state == ViewState.loading,
+    );
 
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: Scaffold(
-        body: _screens[_selectedIndex],
-        bottomNavigationBar: FlashyTabBar(
-          selectedIndex: _selectedIndex,
-          onItemSelected: _onItemTapped,
-          iconSize: 26,
-          animationCurve: Curves.easeInOut,
-          showElevation: true,
-          items: [
-            FlashyTabBarItem(
-              icon: Icon(
-                Icons.person,
-                color: _selectedIndex == 0 ? selectedColor : unselectedColor,
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(localization?.translate('appName') ?? 'Medical Center'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.language),
+            tooltip: 'Change Language',
+            onPressed: () {
+              final langProvider = Provider.of<LanguageProvider>(
+                context,
+                listen: false,
+              );
+              final newLocale = langProvider.appLocale.languageCode == 'ar'
+                  ? const Locale('en')
+                  : const Locale('ar');
+              langProvider.changeLanguage(newLocale);
+            },
+          ),
+        ],
+      ),
+      body: Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(AppDimensions.paddingL),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.medical_services_outlined,
+                size: 80,
+                color: AppColors.primary.withValues(alpha: 0.8),
               ),
-              title: Text(
-                'البيانات',
-                style: GoogleFonts.cairo(
-                  color: _selectedIndex == 0 ? selectedColor : unselectedColor,
+              const SizedBox(height: AppDimensions.paddingL),
+              Text(
+                localization?.translate('welcome') ??
+                    'Welcome to Medical Center',
+                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.textPrimary,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: AppDimensions.paddingXL),
+              TextField(
+                controller: _invoiceController,
+                decoration: InputDecoration(
+                  labelText: localization?.translate('enterInvoiceId'),
+                  prefixIcon: const Icon(Icons.receipt_long),
+                  hintText: 'e.g. 101',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(AppDimensions.radiusM),
+                  ),
+                ),
+                keyboardType: TextInputType.number,
+                textInputAction: TextInputAction.search,
+                onSubmitted: (_) => _submit(),
+                enabled: !isLoading,
+              ),
+              const SizedBox(height: AppDimensions.paddingL),
+              SizedBox(
+                width: double.infinity,
+                height: 50,
+                child: ElevatedButton(
+                  onPressed: isLoading ? null : _submit,
+                  child: isLoading
+                      ? const AppLoader()
+                      : Text(localization?.translate('search') ?? 'Search'),
                 ),
               ),
-            ),
-            FlashyTabBarItem(
-              icon: Icon(
-                Icons.medical_information,
-                color: _selectedIndex == 4 ? selectedColor : unselectedColor,
-              ),
-              title: Text(
-                'الوصفة',
-                style: GoogleFonts.cairo(
-                  color: _selectedIndex == 4 ? selectedColor : unselectedColor,
-                ),
-              ),
-            ),
-            FlashyTabBarItem(
-              icon: Icon(
-                Icons.assignment,
-                color: _selectedIndex == 3 ? selectedColor : unselectedColor,
-              ),
-              title: Text(
-                'التشخيص',
-                style: GoogleFonts.cairo(
-                  color: _selectedIndex == 3 ? selectedColor : unselectedColor,
-                ),
-              ),
-            ),
-            FlashyTabBarItem(
-              icon: Icon(
-                Icons.science,
-                color: _selectedIndex == 1 ? selectedColor : unselectedColor,
-              ),
-              title: Text(
-                'المختبر',
-                style: GoogleFonts.cairo(
-                  color: _selectedIndex == 1 ? selectedColor : unselectedColor,
-                ),
-              ),
-            ),
-            FlashyTabBarItem(
-              icon: Icon(
-                Icons.image,
-                color: _selectedIndex == 2 ? selectedColor : unselectedColor,
-              ),
-              title: Text(
-                'الأشعة',
-                style: GoogleFonts.cairo(
-                  color: _selectedIndex == 2 ? selectedColor : unselectedColor,
-                ),
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

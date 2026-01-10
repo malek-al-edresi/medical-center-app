@@ -2,7 +2,7 @@
 # See https://dart.dev/tools/pub/glossary#lockfile
 packages:
   animate_do:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: animate_do
       sha256: e5c8b92e8495cba5adfff17c0b017d50f46b2766226e9faaf68bc08c91aef034
@@ -138,7 +138,7 @@ packages:
     source: hosted
     version: "1.1.1"
   flashy_tab_bar2:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: flashy_tab_bar2
       sha256: "4c2a8cb2b3f96e84a6baf4fd6e20801fbdf7ebc027d8d8d9d13a0ab8907f7bec"
@@ -151,7 +151,7 @@ packages:
     source: sdk
     version: "0.0.0"
   flutter_animate:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: flutter_animate
       sha256: "7befe2d3252728afb77aecaaea1dec88a89d35b9b1d2eea6d04479e8af9117b5"
@@ -167,7 +167,7 @@ packages:
     source: hosted
     version: "5.0.0"
   flutter_localization:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: flutter_localization
       sha256: "578a73455a0deffc4169ef9372ba0562a3e2cff563e5c524ea87bc96daa519c0"
@@ -175,7 +175,7 @@ packages:
     source: hosted
     version: "0.3.3"
   flutter_localizations:
-    dependency: transitive
+    dependency: "direct main"
     description: flutter
     source: sdk
     version: "0.0.0"
@@ -198,7 +198,7 @@ packages:
     source: sdk
     version: "0.0.0"
   getwidget:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: getwidget
       sha256: ab0201d6c1d27b508f05fa571e0e5038d60a603fd80303002b882f18b1c77231
@@ -206,7 +206,7 @@ packages:
     source: hosted
     version: "7.0.0"
   glassmorphism:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: glassmorphism
       sha256: c0f65ea2681d4ee6d4125b947946d983335cd44765e835cdc039894b076a6e31
@@ -214,7 +214,7 @@ packages:
     source: hosted
     version: "3.0.0"
   google_fonts:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: google_fonts
       sha256: ba03d03bcaa2f6cb7bd920e3b5027181db75ab524f8891c8bc3aa603885b8055
@@ -222,7 +222,7 @@ packages:
     source: hosted
     version: "6.3.3"
   http:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: http
       sha256: "87721a4a50b19c7f1d49001e51409bddc46303966ce89a65af4f4e6004896412"
@@ -246,7 +246,7 @@ packages:
     source: hosted
     version: "4.5.4"
   intl:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: intl
       sha256: "3df61194eb431efc39c4ceba583b95633a403f46c9fd341e550ce0bfa50e9aa5"
@@ -286,7 +286,7 @@ packages:
     source: hosted
     version: "5.1.1"
   lucide_icons:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: lucide_icons
       sha256: ad24d0fd65707e48add30bebada7d90bff2a1bba0a72d6e9b19d44246b0e83c4
@@ -350,7 +350,7 @@ packages:
     source: hosted
     version: "1.1.0"
   path_provider:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: path_provider
       sha256: "50c5dd5b6e1aaf6fb3a78b33f6aa3afca52bf903a8a5298f53101fdaee55bbcd"
@@ -398,7 +398,7 @@ packages:
     source: hosted
     version: "2.3.0"
   pdf:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: pdf
       sha256: "28eacad99bffcce2e05bba24e50153890ad0255294f4dd78a17075a2ba5c8416"
@@ -446,7 +446,7 @@ packages:
     source: hosted
     version: "6.0.3"
   printing:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: printing
       sha256: "482cd5a5196008f984bb43ed0e47cbfdca7373490b62f3b27b3299275bf22a93"
@@ -454,7 +454,7 @@ packages:
     source: hosted
     version: "5.14.2"
   provider:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: provider
       sha256: "4e82183fa20e5ca25703ead7e05de9e4cceed1fbd1eadc1ac3cb6f565a09f272"
@@ -470,7 +470,7 @@ packages:
     source: hosted
     version: "3.0.2"
   qr_flutter:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: qr_flutter
       sha256: "5095f0fc6e3f71d08adef8feccc8cea4f12eec18a2e31c2e8d82cb6019f4b097"
@@ -478,7 +478,7 @@ packages:
     source: hosted
     version: "4.1.0"
   screenshot:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: screenshot
       sha256: "63817697a7835e6ce82add4228e15d233b74d42975c143ad8cfe07009fab866b"
@@ -486,7 +486,7 @@ packages:
     source: hosted
     version: "3.0.0"
   share_plus:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: share_plus
       sha256: d7dc0630a923883c6328ca31b89aa682bacbf2f8304162d29f7c6aaff03a27a1
@@ -603,7 +603,7 @@ packages:
     source: hosted
     version: "30.2.7"
   syncfusion_flutter_pdf:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: syncfusion_flutter_pdf
       sha256: f91452a4c88e3a8651d9e79275753b9dc49c099dfdb8db4a554ef799d9262586

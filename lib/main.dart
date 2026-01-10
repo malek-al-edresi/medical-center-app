@@ -1,111 +1,95 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'dart:io';
 import 'package:provider/provider.dart';
+import 'package:http/http.dart' as http;
 
 import 'core/theme/app_theme.dart';
-import 'data/repositories/preregistration_repository_impl.dart';
-import 'data/services/navigation_service.dart';
+import 'core/localization/app_localizations.dart';
+import 'core/constants/app_strings.dart';
 
-// Services
-import 'data/services/patient_service.dart';
-import 'data/services/lab_result_service.dart';
-import 'data/services/preregistration_service.dart';
-import 'data/services/radiology_result_service.dart';
-import 'data/services/diagnosis_result_service.dart';
-import 'data/services/treatment_result_service.dart';
+import 'data/datasources/remote/medical_api_service.dart';
+import 'data/repositories/medical_repository_impl.dart';
 
-// Repositories
-import 'data/repositories/patient_repository_impl.dart';
-import 'data/repositories/lab_result_repository_impl.dart';
-import 'data/repositories/radiology_result_repository_impl.dart';
-import 'data/repositories/diagnosis_result_repository_impl.dart';
-import 'data/repositories/treatment_result_repository_impl.dart';
-
-// Use Cases
-import 'domain/usecases/get_all_patients.dart';
+import 'domain/usecases/get_patient_by_invoice.dart';
 import 'domain/usecases/get_lab_results.dart';
 import 'domain/usecases/get_radiology_results.dart';
-import 'domain/usecases/get_diagnosis_results.dart';
-import 'domain/usecases/get_treatment_results.dart';
+import 'domain/usecases/get_diagnosis.dart';
+import 'domain/usecases/get_treatment.dart';
 
-// Routing
-import 'domain/usecases/register_patient_usecase_impl.dart';
-import 'logic/providers/preregistration_provider.dart';
-import 'presentation/routes/app_routes.dart';
-
-// Providers
 import 'logic/providers/patient_provider.dart';
-import 'logic/providers/lab_result_provider.dart';
-import 'logic/providers/radiology_result_provider.dart';
-import 'logic/providers/diagnosis_result_provider.dart';
-import 'logic/providers/treatment_result_provider.dart';
+import 'logic/providers/language_provider.dart';
+
+import 'presentation/routes/app_routes.dart';
+import 'core/network/my_http_overrides.dart';
 
 void main() {
-  runApp(const MedicalCenterApp());
+  HttpOverrides.global = MyHttpOverrides();
+  runApp(const MedicalApp());
 }
 
-class MedicalCenterApp extends StatelessWidget {
-  const MedicalCenterApp({super.key});
+class MedicalApp extends StatelessWidget {
+  const MedicalApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // Services
-    final patientService = PatientService();
-    final labService = LabResultService();
-    final radiologyService = RadiologyResultService();
-    final diagnosisService = DiagnosisResultService();
-    final treatmentService = TreatmentResultService();
-    final preregistrationService = RegisterPatientService();
+    // 1. Dependency Injection setup
+    final http.Client httpClient = http.Client();
+    final apiService = MedicalApiService(client: httpClient);
+    final repository = MedicalRepositoryImpl(apiService);
 
-
-    // Repositories
-    final patientRepo = PatientRepositoryImpl(patientService);
-    final labRepo = LabResultRepositoryImpl(labService);
-    final radiologyRepo = RadiologyResultRepositoryImpl(radiologyService);
-    final diagnosisRepo = DiagnosisResultRepositoryImpl(diagnosisService);
-    final treatmentRepo = TreatmentResultRepositoryImpl(treatmentService);
-    final preregistrationRepo = PreregistrationRepositoryImpl(preregistrationService);
-
-
-    // Use Cases
-    final getAllPatients = GetAllPatients(patientRepo);
-    final getLabResults = GetLabResults(labRepo);
-    final getRadiologyResults = GetRadiologyResults(radiologyRepo);
-    final getDiagnosisResults = GetDiagnosisResults(diagnosisRepo);
-    final getTreatmentResults = GetTreatmentResults(treatmentRepo);
-    final registerPatientUseCase = RegisterPatientUseCaseImpl(preregistrationRepo);
+    final getPatient = GetPatientByInvoice(repository);
+    final getLabResults = GetLabResults(repository);
+    final getRadiologyResults = GetRadiologyResults(repository);
+    final getDiagnosis = GetDiagnosis(repository);
+    final getTreatment = GetTreatment(repository);
 
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => PatientProvider(getAllPatients)),
-        ChangeNotifierProvider(create: (_) => LabResultProvider(getLabResults)),
+        ChangeNotifierProvider(create: (_) => LanguageProvider()),
         ChangeNotifierProvider(
-          create: (_) => RadiologyResultProvider(getRadiologyResults),
-        ),
-        ChangeNotifierProvider(
-          create: (_) => DiagnosisResultProvider(getDiagnosisResults),
-        ),
-        ChangeNotifierProvider(
-          create: (_) => TreatmentResultProvider(getTreatmentResults),
-        ),
-        ChangeNotifierProvider(
-          create: (_) => PatientRegisterProvider(registerPatientUseCase),
+          create: (_) => PatientProvider(
+            getPatient: getPatient,
+            getLabResults: getLabResults,
+            getRadiologyResults: getRadiologyResults,
+            getDiagnosis: getDiagnosis,
+            getTreatment: getTreatment,
+          ),
         ),
       ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'Medical Center',
-        theme: AppTheme.lightTheme,
-        navigatorKey: NavigationService.navigatorKey,
-        initialRoute: '/welcome',
-        onGenerateRoute: AppRoutes.generateRoute,
-        locale: const Locale('ar'),
-        supportedLocales: const [Locale('en'), Locale('ar')],
-        localizationsDelegates: const [
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-        ],
+      child: Consumer<LanguageProvider>(
+        builder: (context, languageProvider, child) {
+          return MaterialApp(
+            title: AppStrings.appName,
+            debugShowCheckedModeBanner: false,
+
+            // Theme
+            theme: AppTheme.lightTheme,
+
+            // Localization
+            locale: languageProvider.appLocale,
+            supportedLocales: const [Locale('en'), Locale('ar')],
+            localizationsDelegates: const [
+              AppLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            localeResolutionCallback: (locale, supportedLocales) {
+              if (locale == null) return supportedLocales.first;
+              for (var supportedLocale in supportedLocales) {
+                if (supportedLocale.languageCode == locale.languageCode) {
+                  return supportedLocale;
+                }
+              }
+              return supportedLocales.first;
+            },
+
+            // Navigation
+            initialRoute: AppRoutes.home,
+            onGenerateRoute: AppRoutes.generateRoute,
+          );
+        },
       ),
     );
   }

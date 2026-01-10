@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:lucide_icons/lucide_icons.dart'; // ✅ Already imported
+// ✅ Already imported
 import 'package:glassmorphism/glassmorphism.dart';
 
 import '../../../core/theme/app_fonts.dart';
@@ -36,16 +36,16 @@ class ResultCard extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Colors.white.withOpacity(0.1),
-            Colors.white38.withOpacity(0.05),
+            Colors.white.withValues(alpha: 0.1),
+            Colors.white38.withValues(alpha: 0.05),
           ],
         ),
         borderGradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            colorScheme.primary.withOpacity(0.5),
-            colorScheme.secondary.withOpacity(0.3),
+            colorScheme.primary.withValues(alpha: 0.5),
+            colorScheme.secondary.withValues(alpha: 0.3),
           ],
         ),
         child: Animate(
@@ -73,7 +73,7 @@ class ResultCard extends StatelessWidget {
                     const SizedBox(height: 26),
                     Divider(
                       thickness: 1.1,
-                      color: colorScheme.onSurface.withOpacity(0.3),
+                      color: colorScheme.onSurface.withValues(alpha: 0.3),
                     ),
                     const SizedBox(height: 26),
                     // Scrollable content area if needed
@@ -91,7 +91,7 @@ class ResultCard extends StatelessWidget {
                                     "${entry.key}: ",
                                     style: AppFonts.body.copyWith(
                                       fontWeight: FontWeight.w700,
-                                      color: colorScheme.onSurface.withOpacity(0.85),
+                                      color: colorScheme.onSurface.withValues(alpha: 0.85),
                                       letterSpacing: 0.15,
                                       height: 1.3,
                                     ),
@@ -101,7 +101,7 @@ class ResultCard extends StatelessWidget {
                                       entry.value.toString(),
                                       style: AppFonts.body.copyWith(
                                         fontWeight: FontWeight.w400,
-                                        color: colorScheme.onSurface.withOpacity(0.7),
+                                        color: colorScheme.onSurface.withValues(alpha: 0.7),
                                         letterSpacing: 0.1,
                                         height: 1.4,
                                       ),

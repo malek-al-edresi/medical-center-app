@@ -1,35 +1,20 @@
+import '../../domain/entities/lab_result_entity.dart';
 
-import '../../domain/entities/lab_result.dart';
-
-class LabResultModel extends LabResult {
-  LabResultModel({
-    required String resultDate,
-    required String valueResult,
-    required String valueName,
-    required String valueMaximum,
-    required String valueMinimum,
-    required String unitName,
-    required String testName,
-    required String patientName,
-    required String doctorName,
-    required String clinicName,
-    required String diagnosisDate,
-
-    required String fullDiagnosis,
-  }) : super(
-    resultDate: resultDate,
-    valueResult: valueResult,
-    valueName: valueName,
-    valueMaximum: valueMaximum,
-    valueMinimum: valueMinimum,
-    unitName: unitName,
-    testName: testName,
-    patientName: patientName,
-    doctorName: doctorName,
-    clinicName: clinicName,
-    diagnosisDate: diagnosisDate,
-    fullDiagnosis: fullDiagnosis,
-  );
+class LabResultModel extends LabResultEntity {
+  const LabResultModel({
+    required super.resultDate,
+    required super.valueResult,
+    required super.valueName,
+    required super.valueMaximum,
+    required super.valueMinimum,
+    required super.unitName,
+    required super.testName,
+    required super.patientName,
+    required super.doctorName,
+    required super.clinicName,
+    required super.diagnosisDate,
+    required super.fullDiagnosis,
+  });
 
   factory LabResultModel.fromJson(Map<String, dynamic> json) {
     return LabResultModel(
@@ -47,6 +32,4 @@ class LabResultModel extends LabResult {
       fullDiagnosis: json['full_diagnosis']?.toString() ?? '',
     );
   }
-
-
 }
