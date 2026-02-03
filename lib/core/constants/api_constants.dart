@@ -1,6 +1,6 @@
 class ApiConstants {
   static const String _baseUrl =
-      "https://192.168.0.135:8443/ords/medical_sys_api";
+      "https://192.168.0.136:8443/ords/medical_sys_api";
 
   static const String patientProfile =
       "$_baseUrl/basic_sec_api/basic_sec_view_r_profile_patient";

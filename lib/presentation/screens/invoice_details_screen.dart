@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../core/localization/app_localizations.dart';
-import '../../logic/providers/patient_provider.dart';
+import '../blocs/patient/patient_cubit.dart';
+import '../blocs/patient/patient_state.dart';
 import '../routes/app_routes.dart';
 import '../widgets/patient_info_card.dart';
 import '../widgets/section_card.dart';
@@ -12,80 +13,79 @@ class InvoiceDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final patientProvider = Provider.of<PatientProvider>(context);
     final localization = AppLocalizations.of(context);
-    final patient = patientProvider.patient;
 
-    // Safety check if navigating via direct route or state lost
-    if (patient == null) {
-      return Scaffold(
-        appBar: AppBar(title: const Text('Error')),
-        body: const EmptyState(message: 'No patient data loaded'),
-      );
-    }
+    return BlocBuilder<PatientCubit, PatientState>(
+      builder: (context, state) {
+        // Handle non-loaded states
+        if (state is! PatientLoaded) {
+          return Scaffold(
+            appBar: AppBar(title: const Text('Error')),
+            body: const EmptyState(message: 'No patient data loaded'),
+          );
+        }
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          '${localization?.translate('patientId')}: ${patient.patientId}',
-        ),
-        centerTitle: true,
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            PatientInfoCard(patient: patient),
+        final patient = state.patient;
 
-            const Divider(),
-
-            // Lab Results Section
-            SectionCard(
-              title: localization?.translate('labResults') ?? 'Lab Results',
-              subtitle: '${patientProvider.labResults.length} Records',
-              icon: Icons.science,
-              onTap: () => Navigator.pushNamed(context, AppRoutes.labResults),
+        return Scaffold(
+          appBar: AppBar(
+            title: Text(
+              '${localization?.translate('patientId')}: ${patient.patientId}',
             ),
+            centerTitle: true,
+          ),
+          body: SingleChildScrollView(
+            child: Column(
+              children: [
+                PatientInfoCard(patient: patient),
 
-            // Radiology Section
-            SectionCard(
-              title: localization?.translate('radiology') ?? 'Radiology',
-              subtitle: '${patientProvider.radiologyResults.length} Images',
-              icon: Icons.image,
-              onTap: () => Navigator.pushNamed(context, AppRoutes.radiology),
-              iconColor: Colors.purple,
-            ),
+                const Divider(),
 
-            // Diagnosis Section (Placeholder for consistency or separate screen)
-            SectionCard(
-              title: localization?.translate('diagnosis') ?? 'Diagnosis',
-              subtitle: '${patientProvider.diagnosis.length} Records',
-              icon: Icons.assignment,
-              onTap: () {
-                // For now, maybe just show a dialog or list bottom sheet?
-                // Or create a dedicated screen later.
-                // Assuming "Diagnosis" is simple enough to show in a card or modal
-                // but for enterprise, likely a screen.
-                // Let's create a screen or keep it simpler as per Phase 1 reqs?
-                // Request says "Display diagnosis and treatment".
-                // I'll add simple placeholder action or create screen if time permits.
-                // Reusing LabResults style for diagnosis is possible or just a simple list.
-              },
-              iconColor: Colors.orange,
-            ),
+                // Lab Results Section
+                SectionCard(
+                  title: localization?.translate('labResults') ?? 'Lab Results',
+                  subtitle: '${state.labResults.length} Records',
+                  icon: Icons.science,
+                  onTap: () =>
+                      Navigator.pushNamed(context, AppRoutes.labResults),
+                ),
 
-            // Treatment Section
-            SectionCard(
-              title: localization?.translate('treatment') ?? 'Treatment',
-              subtitle: '${patientProvider.treatment.length} Records',
-              icon: Icons.medication,
-              onTap: () {
-                // SImilar to diagnosis
-              },
-              iconColor: Colors.teal,
+                // Radiology Section
+                SectionCard(
+                  title: localization?.translate('radiology') ?? 'Radiology',
+                  subtitle: '${state.radiologyResults.length} Images',
+                  icon: Icons.image,
+                  onTap: () =>
+                      Navigator.pushNamed(context, AppRoutes.radiology),
+                  iconColor: Colors.purple,
+                ),
+
+                // Diagnosis Section
+                SectionCard(
+                  title: localization?.translate('diagnosis') ?? 'Diagnosis',
+                  subtitle: '${state.diagnosis.length} Records',
+                  icon: Icons.assignment,
+                  onTap: () {
+                    Navigator.pushNamed(context, AppRoutes.diagnosis);
+                  },
+                  iconColor: Colors.orange,
+                ),
+
+                // Treatment Section
+                SectionCard(
+                  title: localization?.translate('treatment') ?? 'Treatment',
+                  subtitle: '${state.treatment.length} Records',
+                  icon: Icons.medication,
+                  onTap: () {
+                    Navigator.pushNamed(context, AppRoutes.treatment);
+                  },
+                  iconColor: Colors.teal,
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }

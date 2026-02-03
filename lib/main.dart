@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'dart:io';
-import 'package:provider/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
 
 import 'core/theme/app_theme.dart';
@@ -17,8 +17,9 @@ import 'domain/usecases/get_radiology_results.dart';
 import 'domain/usecases/get_diagnosis.dart';
 import 'domain/usecases/get_treatment.dart';
 
-import 'logic/providers/patient_provider.dart';
-import 'logic/providers/language_provider.dart';
+import 'presentation/blocs/language/language_cubit.dart';
+import 'presentation/blocs/language/language_state.dart';
+import 'presentation/blocs/patient/patient_cubit.dart';
 
 import 'presentation/routes/app_routes.dart';
 import 'core/network/my_http_overrides.dart';
@@ -44,11 +45,11 @@ class MedicalApp extends StatelessWidget {
     final getDiagnosis = GetDiagnosis(repository);
     final getTreatment = GetTreatment(repository);
 
-    return MultiProvider(
+    return MultiBlocProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => LanguageProvider()),
-        ChangeNotifierProvider(
-          create: (_) => PatientProvider(
+        BlocProvider(create: (_) => LanguageCubit()),
+        BlocProvider(
+          create: (_) => PatientCubit(
             getPatient: getPatient,
             getLabResults: getLabResults,
             getRadiologyResults: getRadiologyResults,
@@ -57,8 +58,8 @@ class MedicalApp extends StatelessWidget {
           ),
         ),
       ],
-      child: Consumer<LanguageProvider>(
-        builder: (context, languageProvider, child) {
+      child: BlocBuilder<LanguageCubit, LanguageState>(
+        builder: (context, languageState) {
           return MaterialApp(
             title: AppStrings.appName,
             debugShowCheckedModeBanner: false,
@@ -67,7 +68,7 @@ class MedicalApp extends StatelessWidget {
             theme: AppTheme.lightTheme,
 
             // Localization
-            locale: languageProvider.appLocale,
+            locale: languageState.locale,
             supportedLocales: const [Locale('en'), Locale('ar')],
             localizationsDelegates: const [
               AppLocalizations.delegate,
