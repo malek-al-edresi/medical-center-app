@@ -2,7 +2,7 @@
 
 A professional, production-ready Flutter mobile application designed for medical centers to manage patient data, invoices, and medical results. This app serves as a frontend for an **Oracle APEX** based hospital management system.
 
-Built with strict **Clean Architecture** principles to ensure scalability, maintainability, and testability.
+Built with strict **Clean Architecture** principles and **BLoC (Cubit)** pattern to ensure scalability, maintainability, and testability.
 
 ---
 
@@ -14,6 +14,7 @@ The app acts as a secure patient portal and medical record viewer, empowering pa
 - 🧪 **Lab Results**: Access detailed laboratory test results with normal ranges and abnormalities highlighted.
 - 🩻 **Radiology**: View radiology reports and images.
 - 💊 **Treatments**: Access diagnosis details and prescribed treatment plans.
+- 🩺 **Diagnosis**: View detailed diagnosis information.
 - 📄 **PDF Reports**: **Share** or **Save** official medical reports as PDF.
 - 🌍 **Localization**: Seamlessly toggle between **English** and **Arabic** (Full RTL support).
 
@@ -21,11 +22,12 @@ The app acts as a secure patient portal and medical record viewer, empowering pa
 
 ## 🏗️ Architecture
 
-This project strictly follows **Clean Architecture** combined with **MVVM** (Model-View-ViewModel) pattern, ensuring clear separation of concerns:
+This project strictly follows **Clean Architecture** combined with **BLoC (Cubit)** pattern, ensuring clear separation of concerns:
 
 ### 1. Presentation Layer (`lib/presentation/`)
-Responsible for specific UI code.
+Responsible for specific UI code and State Management.
 - **Screens**: UI pages (e.g., `HomeScreen`, `LabResultsScreen`).
+- **Blocs**: State management using Cubits (e.g., `PatientCubit`).
 - **Widgets**: Reusable UI components (e.g., `ResultCard`, `SectionHeader`).
 - **Routes**: Centralized navigation management via `AppRoutes`.
 
@@ -70,9 +72,8 @@ lib/
 │   ├── entities/           # Pure business objects
 │   ├── repositories/       # Repository interfaces
 │   └── usecases/           # Application business rules
-├── logic/                  # State management
-│   └── providers/          # Provider implementations
-├── presentation/           # UI Layer
+├── presentation/           # UI Layer & State Management
+│   ├── blocs/              # BLoC/Cubit implementations
 │   ├── routes/             # Navigation configuration
 │   ├── screens/            # App pages
 │   └── widgets/            # Reusable UI components
@@ -85,7 +86,7 @@ lib/
 
 - **Framework**: [Flutter](https://flutter.dev/) (SDK 3.x)
 - **Language**: Dart
-- **State Management**: [Provider](https://pub.dev/packages/provider)
+- **State Management**: [flutter_bloc](https://pub.dev/packages/flutter_bloc) (Cubit)
 - **Networking**: [http](https://pub.dev/packages/http)
 - **UI & Design**:
   - [GetWidget](https://pub.dev/packages/getwidget) for standard components.
