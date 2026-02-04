@@ -5,9 +5,9 @@ import '../../core/constants/app_dimensions.dart';
 import '../../core/widgets/empty_state.dart';
 import '../blocs/patient/patient_cubit.dart';
 import '../blocs/patient/patient_state.dart';
-import '../widgets/medical_image_viewer.dart';
+import '../shared/widgets/medical_image_viewer.dart';
 import '../../core/localization/app_localizations.dart';
-import '../widgets/app_card.dart';
+import '../shared/widgets/app_card.dart';
 import '../layout/app_scaffold.dart';
 
 class RadiologyScreen extends StatelessWidget {
