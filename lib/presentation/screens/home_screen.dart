@@ -1,13 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../core/constants/app_colors.dart';
+import 'package:flutter_animate/flutter_animate.dart';
+
 import '../../core/constants/app_dimensions.dart';
+import '../../core/constants/app_colors.dart';
 import '../../core/localization/app_localizations.dart';
+
 import '../blocs/patient/patient_cubit.dart';
 import '../blocs/patient/patient_state.dart';
 import '../blocs/language/language_cubit.dart';
 import '../routes/app_routes.dart';
-import '../../core/widgets/app_loader.dart';
+import '../layout/app_scaffold.dart';
+
+import '../widgets/primary_button.dart';
+import '../widgets/custom_text_field.dart';
+import '../widgets/app_card.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -35,33 +42,20 @@ class _HomeScreenState extends State<HomeScreen> {
     final invoiceId = _invoiceController.text.trim();
     if (invoiceId.isEmpty) return;
 
-    // Dismiss keyboard
     FocusScope.of(context).unfocus();
-
-    // Trigger patient data load
     context.read<PatientCubit>().loadPatient(invoiceId);
   }
 
   @override
   Widget build(BuildContext context) {
     final localization = AppLocalizations.of(context);
+    final theme = Theme.of(context);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(localization?.translate('appName') ?? 'Medical Center'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.language),
-            tooltip: 'Change Language',
-            onPressed: () {
-              context.read<LanguageCubit>().toggleLanguage();
-            },
-          ),
-        ],
-      ),
+    return AppScaffold(
+      withSafeArea: false,
+      backgroundColor: AppColors.background,
       body: BlocConsumer<PatientCubit, PatientState>(
         listener: (context, state) {
-          // Handle side effects: navigation and error snackbars
           if (state is PatientLoaded) {
             Navigator.pushNamed(context, AppRoutes.invoiceDetails);
           } else if (state is PatientError) {
@@ -69,6 +63,11 @@ class _HomeScreenState extends State<HomeScreen> {
               SnackBar(
                 content: Text(state.message),
                 backgroundColor: AppColors.error,
+                behavior: SnackBarBehavior.floating,
+                margin: const EdgeInsets.all(AppDimensions.md),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(AppDimensions.radiusSm),
+                ),
               ),
             );
           }
@@ -76,59 +75,232 @@ class _HomeScreenState extends State<HomeScreen> {
         builder: (context, state) {
           final isLoading = state is PatientLoading;
 
-          return Center(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(AppDimensions.paddingL),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.medical_services_outlined,
-                    size: 80,
-                    color: AppColors.primary.withValues(alpha: 0.8),
-                  ),
-                  const SizedBox(height: AppDimensions.paddingL),
-                  Text(
-                    localization?.translate('welcome') ??
-                        'Welcome to Medical Center',
-                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.textPrimary,
+          return Stack(
+            children: [
+              // Decorative Background
+              Positioned(
+                top: -150,
+                right: -100,
+                child: Container(
+                  width: 400,
+                  height: 400,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        AppColors.primary.withValues(alpha: 0.2),
+                        AppColors.primary.withValues(alpha: 0.05),
+                      ],
+                      begin: Alignment.topRight,
+                      end: Alignment.bottomLeft,
                     ),
-                    textAlign: TextAlign.center,
+                    shape: BoxShape.circle,
                   ),
-                  const SizedBox(height: AppDimensions.paddingXL),
-                  TextField(
-                    controller: _invoiceController,
-                    decoration: InputDecoration(
-                      labelText: localization?.translate('enterInvoiceId'),
-                      prefixIcon: const Icon(Icons.receipt_long),
-                      hintText: 'e.g. 101',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(
-                          AppDimensions.radiusM,
-                        ),
-                      ),
-                    ),
-                    keyboardType: TextInputType.number,
-                    textInputAction: TextInputAction.search,
-                    onSubmitted: (_) => _submit(),
-                    enabled: !isLoading,
-                  ),
-                  const SizedBox(height: AppDimensions.paddingL),
-                  SizedBox(
-                    width: double.infinity,
-                    height: 50,
-                    child: ElevatedButton(
-                      onPressed: isLoading ? null : _submit,
-                      child: isLoading
-                          ? const AppLoader()
-                          : Text(localization?.translate('search') ?? 'Search'),
-                    ),
-                  ),
-                ],
+                ),
               ),
-            ),
+              Positioned(
+                top: -50,
+                left: -100,
+                child: Container(
+                  width: 300,
+                  height: 300,
+                  decoration: BoxDecoration(
+                    color: AppColors.secondary.withValues(alpha: 0.1),
+                    shape: BoxShape.circle,
+                  ),
+                ),
+              ),
+
+              SafeArea(
+                child: Center(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppDimensions.lg,
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        // Language Switcher
+                        Align(
+                          alignment: Alignment.topRight,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: AppColors.surface,
+                              borderRadius: BorderRadius.circular(
+                                AppDimensions.radiusFull,
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: AppColors.shadow,
+                                  blurRadius: 8,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            child: IconButton(
+                              icon: const Icon(
+                                Icons.language,
+                                color: AppColors.primary,
+                              ),
+                              onPressed: () {
+                                context.read<LanguageCubit>().toggleLanguage();
+                              },
+                              tooltip: 'Switch Language',
+                            ),
+                          ),
+                        ),
+
+                        const SizedBox(height: AppDimensions.xxl),
+
+                        // Logo / Icon
+                        Center(
+                              child: Container(
+                                padding: const EdgeInsets.all(AppDimensions.xl),
+                                decoration: BoxDecoration(
+                                  color: AppColors.surface,
+                                  shape: BoxShape.circle,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: AppColors.primary.withValues(
+                                        alpha: 0.15,
+                                      ),
+                                      blurRadius: 24,
+                                      offset: const Offset(0, 8),
+                                    ),
+                                  ],
+                                ),
+                                child: Icon(
+                                  Icons.medical_services_rounded,
+                                  size: 64,
+                                  color: AppColors.primary,
+                                ),
+                              ),
+                            )
+                            .animate()
+                            .scale(duration: 600.ms, curve: Curves.easeOutBack)
+                            .fadeIn(duration: 600.ms),
+
+                        const SizedBox(height: AppDimensions.xl),
+
+                        // Welcome Text
+                        Column(
+                          children: [
+                            Text(
+                                  localization?.translate('welcome') ??
+                                      'Welcome back',
+                                  style: theme.textTheme.displaySmall?.copyWith(
+                                    color: AppColors.textPrimary,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                )
+                                .animate()
+                                .fadeIn(delay: 200.ms)
+                                .slideY(begin: 0.3, end: 0),
+                            const SizedBox(height: AppDimensions.sm),
+                            Text(
+                                  'Access your medical records securely',
+                                  style: theme.textTheme.bodyLarge?.copyWith(
+                                    color: AppColors.textSecondary,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                )
+                                .animate()
+                                .fadeIn(delay: 300.ms)
+                                .slideY(begin: 0.3, end: 0),
+                          ],
+                        ),
+
+                        const SizedBox(height: AppDimensions.xxl),
+
+                        // Search Card
+                        AppCard(
+                          padding: const EdgeInsets.all(AppDimensions.xl),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.receipt_long_rounded,
+                                    color: AppColors.primary,
+                                    size: 24,
+                                  ),
+                                  const SizedBox(width: AppDimensions.sm),
+                                  Text(
+                                    "Find Invoice",
+                                    style: theme.textTheme.titleLarge?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: AppDimensions.lg),
+
+                              CustomTextField(
+                                label:
+                                    localization?.translate('enterInvoiceId') ??
+                                    'Invoice ID',
+                                controller: _invoiceController,
+                                hint: 'e.g. 101',
+                                // prefixIcon is handled in CustomTextField,
+                                // avoiding duplicate icon if we want a clean look,
+                                // but adding it for clarity as per previous design
+                                prefixIcon: Icons.numbers_rounded,
+                                keyboardType: TextInputType.number,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Required';
+                                  }
+                                  return null;
+                                },
+                              ),
+
+                              const SizedBox(height: AppDimensions.xl),
+
+                              PrimaryButton(
+                                text:
+                                    localization?.translate('search') ??
+                                    'View Records',
+                                onPressed: _submit,
+                                isLoading: isLoading,
+                                icon: Icons.arrow_forward_rounded,
+                                width: double.infinity,
+                                height: 56,
+                              ),
+                            ],
+                          ),
+                        ).animate().fadeIn(delay: 400.ms).slideY(begin: 0.2, end: 0),
+
+                        const SizedBox(height: AppDimensions.xxl),
+
+                        // Footer
+                        Center(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.verified_user_outlined,
+                                size: 16,
+                                color: AppColors.textLight,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                "Secure Medical System",
+                                style: theme.textTheme.bodySmall?.copyWith(
+                                  color: AppColors.textLight,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ).animate().fadeIn(delay: 600.ms),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
           );
         },
       ),

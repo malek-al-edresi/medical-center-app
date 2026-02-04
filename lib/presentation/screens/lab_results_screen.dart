@@ -7,19 +7,18 @@ import '../blocs/patient/patient_cubit.dart';
 import '../blocs/patient/patient_state.dart';
 import '../../domain/entities/lab_result_entity.dart';
 import '../../core/localization/app_localizations.dart';
+import '../widgets/app_card.dart';
+import '../layout/app_scaffold.dart';
 
 class LabResultsScreen extends StatelessWidget {
   const LabResultsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
+    return AppScaffold(
+      title:
           AppLocalizations.of(context)?.translate('labResults') ??
-              'Lab Results',
-        ),
-      ),
+          'Lab Results',
       body: BlocBuilder<PatientCubit, PatientState>(
         builder: (context, state) {
           if (state is! PatientLoaded) {
@@ -42,80 +41,134 @@ class LabResultsScreen extends StatelessWidget {
             );
           }
 
-          return ListView.builder(
-            padding: const EdgeInsets.all(AppDimensions.paddingM),
+          return ListView.separated(
+            padding: const EdgeInsets.all(AppDimensions.md),
             itemCount: results.length,
+            separatorBuilder: (context, index) =>
+                const SizedBox(height: AppDimensions.md),
             itemBuilder: (context, index) {
               final result = results[index];
-              return _buildResultCard(context, result);
+              return _LabResultCard(result: result);
             },
           );
         },
       ),
     );
   }
+}
 
-  Widget _buildResultCard(BuildContext context, LabResultEntity result) {
+class _LabResultCard extends StatelessWidget {
+  final LabResultEntity result;
+
+  const _LabResultCard({required this.result});
+
+  @override
+  Widget build(BuildContext context) {
+    // Basic logic to determine if result is abnormal
     bool isAbnormal =
-        result.valueResult != 'Normal' &&
-        result.valueResult != '-'; // Simplified check
+        result.valueResult.toLowerCase() != 'normal' &&
+        result.valueResult != '-';
 
-    return Card(
-      margin: const EdgeInsets.only(bottom: AppDimensions.paddingM),
-      child: Padding(
-        padding: const EdgeInsets.all(AppDimensions.paddingM),
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Text(
-                    result.testName,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
-                  ),
-                ),
-                Text(
-                  result.resultDate.split(' ').first,
-                  style: const TextStyle(color: Colors.grey, fontSize: 12),
-                ),
-              ],
-            ),
-            const Divider(),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Result: ${result.valueResult}',
-                  style: TextStyle(
-                    color: isAbnormal ? AppColors.error : AppColors.textPrimary,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                Text(
-                  '${result.valueMinimum} - ${result.valueMaximum} ${result.unitName}',
-                ),
-              ],
-            ),
-            if (result.valueName.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.only(top: 8.0),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    'Comment: ${result.valueName}',
-                    style: const TextStyle(
-                      fontStyle: FontStyle.italic,
-                      color: Colors.grey,
-                    ),
+    // Potentially more complex logic could check if value is within min/max if they are numbers
+    // But keeping it simple as per original code
+
+    final theme = Theme.of(context);
+
+    return AppCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Text(
+                  result.testName,
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.primary,
                   ),
                 ),
               ),
+              if (result.resultDate.isNotEmpty)
+                Text(
+                  result.resultDate.split(' ').first,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: AppColors.textSecondary,
+                  ),
+                ),
+            ],
+          ),
+
+          const SizedBox(height: AppDimensions.md),
+          const Divider(height: 1, color: AppColors.divider),
+          const SizedBox(height: AppDimensions.md),
+
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Result',
+                      style: theme.textTheme.labelSmall?.copyWith(
+                        color: AppColors.textLight,
+                      ),
+                    ),
+                    Text(
+                      result.valueResult,
+                      style: theme.textTheme.bodyLarge?.copyWith(
+                        color: isAbnormal ? AppColors.error : AppColors.success,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      'Reference (${result.unitName})',
+                      style: theme.textTheme.labelSmall?.copyWith(
+                        color: AppColors.textLight,
+                      ),
+                    ),
+                    Text(
+                      '${result.valueMinimum} - ${result.valueMaximum}',
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: AppColors.textPrimary,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+
+          if (result.valueName.isNotEmpty) ...[
+            const SizedBox(height: AppDimensions.md),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(AppDimensions.sm),
+              decoration: BoxDecoration(
+                color: AppColors.background,
+                borderRadius: BorderRadius.circular(AppDimensions.radiusSm),
+              ),
+              child: Text(
+                'Comment: ${result.valueName}',
+                style: theme.textTheme.bodySmall?.copyWith(
+                  fontStyle: FontStyle.italic,
+                  color: AppColors.textSecondary,
+                ),
+              ),
+            ),
           ],
-        ),
+        ],
       ),
     );
   }
