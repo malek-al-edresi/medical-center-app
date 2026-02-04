@@ -12,9 +12,9 @@ import '../blocs/language/language_cubit.dart';
 import '../routes/app_routes.dart';
 import '../layout/app_scaffold.dart';
 
-import '../widgets/primary_button.dart';
-import '../widgets/custom_text_field.dart';
-import '../widgets/app_card.dart';
+import '../shared/widgets/primary_button.dart';
+import '../shared/widgets/custom_text_field.dart';
+import '../shared/widgets/app_card.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});

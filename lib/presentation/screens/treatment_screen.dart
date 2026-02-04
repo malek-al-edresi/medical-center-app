@@ -7,7 +7,7 @@ import '../../core/localization/app_localizations.dart';
 import '../../domain/entities/treatment_entity.dart';
 import '../blocs/patient/patient_cubit.dart';
 import '../blocs/patient/patient_state.dart';
-import '../widgets/app_card.dart';
+import '../shared/widgets/app_card.dart';
 import '../layout/app_scaffold.dart';
 
 /// Screen displaying patient treatment records.

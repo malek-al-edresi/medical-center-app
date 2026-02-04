@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../core/constants/app_dimensions.dart';
-import '../../core/constants/app_colors.dart';
-import '../../domain/entities/patient_entity.dart';
+import '../../../core/constants/app_dimensions.dart';
+import '../../../core/constants/app_colors.dart';
+import '../../../domain/entities/patient_entity.dart';
 import 'app_card.dart';
 
 class PatientInfoCard extends StatelessWidget {

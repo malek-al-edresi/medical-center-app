@@ -8,8 +8,8 @@ import '../../core/localization/app_localizations.dart';
 import '../blocs/patient/patient_cubit.dart';
 import '../blocs/patient/patient_state.dart';
 import '../routes/app_routes.dart';
-import '../widgets/patient_info_card.dart';
-import '../widgets/section_card.dart';
+import '../shared/widgets/patient_info_card.dart';
+import '../shared/widgets/section_card.dart';
 import '../../core/widgets/empty_state.dart';
 import '../layout/app_scaffold.dart';
 
