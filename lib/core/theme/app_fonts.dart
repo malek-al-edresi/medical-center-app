@@ -15,6 +15,6 @@ class AppFonts {
   static final sub = GoogleFonts.cairo(
     fontSize: 14,
     color: Colors.grey,
-  ); // ✅ أُضيف هذا الخط
+  ); 
 }
 
